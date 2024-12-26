@@ -15,7 +15,7 @@ app.get("/tasks", async (req, res) => {
         const tasks = await TaskModel.find({});
         res.status(200).send(tasks);
     } catch (error) {
-        req.status(500).send(error.message);
+        res.status(500).send(error.message);
     }
 });
 
@@ -25,7 +25,23 @@ app.post("/tasks", async (req, res) => {
         await newTask.save();
         res.status(201).send(newTask);
     } catch (error) {
-        req.status(500).send(error.message);
+        res.status(500).send(error.message);
+    }
+});
+
+app.delete("/task/:id", async (req, res) => {
+    try {
+        const taskId = req.params.id;
+        const taskToDelete = await TaskModel.findById(taskId);
+
+        if (!taskToDelete) {
+            res.status(500).send("Essa tarefa não foi encontrada");
+        }
+
+        const deletedTask = await TaskModel.findByIdAndDelete(taskId);
+        res.status(200).send(deletedTask);
+    } catch (error) {
+        res.status(500).send(error.message);
     }
 });
 
